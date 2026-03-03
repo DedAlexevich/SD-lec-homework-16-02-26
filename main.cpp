@@ -10,15 +10,14 @@ struct BiList {
 template< class T >
 BiList< T >* makeBiList(T val)
 {
-  BiList< T >* list = new BiList<T>;
-  list->val = val;
+  BiList< T >* list = new BiList<T>{val, nullptr, nullptr};
   list->next = list;
   list->prev = list;
   return list;
 }
 
 template< class T >
-BiList< T >* pushFront(BiList< T >* h, T val)
+BiList< T >* add(BiList< T >* h, T val)
 {
   BiList< T >* node = new BiList< T > {val, h, h->prev};
   h->prev->next = node;
@@ -27,7 +26,7 @@ BiList< T >* pushFront(BiList< T >* h, T val)
 }
 
 template< class T >
-BiList< T >* pushBack(BiList< T >* h, T val)
+BiList< T >* insert(BiList< T >* h, T val)
 {
   BiList< T >* node = new BiList< T > {val, h->next, h};
   h->next->prev = node;
@@ -36,18 +35,18 @@ BiList< T >* pushBack(BiList< T >* h, T val)
 }
 
 template < class T >
-BiList< T >* insert(BiList< T >* h ,size_t pos, T val)
+BiList< T >* insertAt(BiList< T >* h ,size_t pos, T val)
 {
   BiList< T >* curr = h;
   for (size_t p = 0; p < pos; ++p) {
     curr = curr->next;
   }
-  pushBack(curr, val);
+  add(curr, val);
   return h;
 }
 
 template< class T >
-size_t size(BiList< T >* h)
+size_t size(const BiList< T >* h) noexcept
 {
   BiList< T >* head = h;
   size_t s = 1;
@@ -60,7 +59,7 @@ size_t size(BiList< T >* h)
 }
 
 template< class T >
-void clear(BiList< T >* h)
+void clear(BiList< T >* h) noexcept
 {
   BiList< T >* e = h->prev;
   BiList< T >* n = nullptr;
@@ -73,19 +72,30 @@ void clear(BiList< T >* h)
 }
 
 template< class T >
-BiList< T >* remove(BiList< T >* h)
+BiList< T >* cut(BiList< T >* h) noexcept
 {
   if (h->next == h) {
     delete h;
     return nullptr;
   }
-
   BiList< T >* n = h->next;
   h->prev->next = h->next;
   h->next->prev = h->prev;
   delete h;
-
   return n;
+}
+
+template< class T >
+BiList< T >* erase(BiList< T >* h) noexcept
+{
+  if (h->next == h) {
+    return h;
+  }
+  BiList< T >* rm = h->next;
+  h->next = rm->next;
+  rm->next->prev = h;
+  delete rm;
+  return h;
 }
 
 template< class T, class R >
@@ -109,7 +119,7 @@ R rtraverse(R r, BiList< T >* h, BiList< T >* e)
 }
 
 template< class T >
-T& at(BiList< T >* h, size_t pos)
+T& at(const BiList< T >* h, size_t pos) noexcept
 {
   for (size_t i = 0; i < pos; ++i) {
     h = h->next;
@@ -117,29 +127,40 @@ T& at(BiList< T >* h, size_t pos)
   return h->val;
 }
 
+template< class T >
+void print(BiList< T >* h)
+{
+  traverse([](BiList<int>* n)  {
+      std::cout << n->val << ' ';
+    }, h, h);
+}
+
 int main()
 {
-  auto bilist = makeBiList< int >(1);
-  bilist = pushBack(bilist, 2);
-  bilist = pushFront(bilist, 0);
+  size_t sizeArray = 10;
+  int* array = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  BiList<int>* h = nullptr;
 
-  bilist =  insert(bilist, 2, 3);
-  std::cout << size(bilist) << '\n';
-  std::cout << at(bilist, 0) << '\n';
-  std::cout << at(bilist, 1) << '\n';
-  std::cout << at(bilist, 2) << '\n';
-  std::cout << at(bilist, 3) << "\n\n";
+  try {
+    h = makeBiList(array[0]);
+  } catch (...) {
+    delete[] array;
+    return 1;
+  }
 
-  std::cout << size(bilist) << '\n';
-  std::cout << at(bilist, 0) << '\n';
-  std::cout << at(bilist, 1) << '\n';
-  std::cout << at(bilist, 2) << '\n';
-  std::cout << at(bilist, 3) << '\n';
+  for (size_t i = sizeArray - 1; i > 0; --i) {
+    try {
+      h = insert(h, array[i]);
+    } catch (...) {
+      clear(h);
+      delete[] array;
+      return 1;
+    }
 
-  traverse([](BiList<int>* n) {
-    std::cout << n->val << ' ';
-  }, bilist, bilist);
+  }
+  print(h);
 
-  clear(bilist);
+  clear(h);
+  delete[] array;
 }
 
