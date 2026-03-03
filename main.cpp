@@ -32,7 +32,7 @@ BiList< T >* pushBack(BiList< T >* h, T val)
   BiList< T >* node = new BiList< T > {val, h->next, h};
   h->next->prev = node;
   h->next = node;
-  return node;
+  return h;
 }
 
 template < class T >
@@ -42,7 +42,8 @@ BiList< T >* insert(BiList< T >* h ,size_t pos, T val)
   for (size_t p = 0; p < pos; ++p) {
     curr = curr->next;
   }
-  return pushBack(curr, val);
+  pushBack(curr, val);
+  return h;
 }
 
 template< class T >
@@ -72,44 +73,40 @@ void clear(BiList< T >* h)
 }
 
 template< class T >
-BiList< T >* remove(BiList< T >* h, BiList< T >* e)
+BiList< T >* remove(BiList< T >* h)
 {
-  BiList< T >* n = h;
-  while (h != e) {
-    h->prev->next = h->next;
-    h->next->prev = h->prev;
-    n = h->next;
+  if (h->next == h) {
     delete h;
-    h = n;
+    return nullptr;
   }
-  return n->prev;
-}
 
-template< class T >
-BiList< T >* cutTail(BiList< T >* h)
-{
-  BiList< T >* node = h->prev;
-  h->prev->prev->next = h;
-  h->prev = h->prev->prev;
-  delete node;
-  return h;
-}
-
-template< class T >
-BiList< T >* cutHead(BiList< T >* h)
-{
-  BiList< T >* newHead = h->next;
-  h->prev->next = newHead;
-  newHead->prev = h->prev;
+  BiList< T >* n = h->next;
+  h->prev->next = h->next;
+  h->next->prev = h->prev;
   delete h;
-  return newHead;
+
+  return n;
 }
 
 template< class T, class R >
-R traverse(R r, BiList< T >* h, BiList< T >* e);
+R traverse(R r, BiList< T >* h, BiList< T >* e)
+{
+  do {
+    r(h);
+    h = h->next;
+  } while (h != e);
+  return r;
+}
 
 template< class T, class R >
-R rtraverse(R r, BiList< T >* h, BiList< T >* e);
+R rtraverse(R r, BiList< T >* h, BiList< T >* e)
+{
+  do {
+    r(h);
+    h = h->prev;
+  } while (h != e);
+  return r;
+}
 
 template< class T >
 T& at(BiList< T >* h, size_t pos)
@@ -123,22 +120,25 @@ T& at(BiList< T >* h, size_t pos)
 int main()
 {
   auto bilist = makeBiList< int >(1);
-  pushBack(bilist, 2);
-  pushFront(bilist, 0);
+  bilist = pushBack(bilist, 2);
+  bilist = pushFront(bilist, 0);
 
-  insert(bilist->prev, 1, 3);
+  bilist =  insert(bilist, 2, 3);
   std::cout << size(bilist) << '\n';
-  std::cout << at(bilist, 0) << '\n';  //1
-  std::cout << at(bilist, 1) << '\n';  //3
-  std::cout << at(bilist, 2) << '\n';  //2
-  std::cout << at(bilist, 3) << "\n\n";//0
+  std::cout << at(bilist, 0) << '\n';
+  std::cout << at(bilist, 1) << '\n';
+  std::cout << at(bilist, 2) << '\n';
+  std::cout << at(bilist, 3) << "\n\n";
 
-  remove(bilist->next, bilist->next->next);
   std::cout << size(bilist) << '\n';
   std::cout << at(bilist, 0) << '\n';
   std::cout << at(bilist, 1) << '\n';
   std::cout << at(bilist, 2) << '\n';
   std::cout << at(bilist, 3) << '\n';
+
+  traverse([](BiList<int>* n) {
+    std::cout << n->val << ' ';
+  }, bilist, bilist);
 
   clear(bilist);
 }
