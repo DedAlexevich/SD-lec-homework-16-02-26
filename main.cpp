@@ -46,7 +46,17 @@ BiList< T >* insert(BiList< T >* h ,size_t pos, T val)
 }
 
 template< class T >
-size_t size(BiList< T >* h);
+size_t size(BiList< T >* h)
+{
+  BiList< T >* head = h;
+  size_t s = 1;
+  h = h->next;
+  while (h != head) {
+    s++;
+    h = h->next;
+  }
+  return s;
+}
 
 template< class T >
 void clear(BiList< T >* h)
@@ -86,7 +96,7 @@ int main()
   pushFront(bilist, 0);
 
   insert(bilist->prev, 1, 3);
-
+  std::cout << size(bilist) << '\n';
   clear(bilist);
 }
 
