@@ -36,7 +36,14 @@ BiList< T >* pushBack(BiList< T >* h, T val)
 }
 
 template < class T >
-BiList< T >* insert(BiList< T >* h ,size_t pos, T val);
+BiList< T >* insert(BiList< T >* h ,size_t pos, T val)
+{
+  BiList< T >* curr = h;
+  for (size_t p = 0; p < pos; ++p) {
+    curr->next;
+  }
+  pushBack(curr, val);
+}
 
 template< class T >
 size_t size(BiList< T >* h);
@@ -73,5 +80,13 @@ template< class T >
 T& at(BiList< T >* h, size_t pos);
 
 int main()
-{}
+{
+  auto bilist = makeBiList< int >(1);
+  pushBack(bilist, 2);
+  pushFront(bilist, 0);
+
+  insert(bilist->prev, 1, 3);
+
+  clear(bilist);
+}
 
