@@ -86,10 +86,24 @@ BiList< T >* remove(BiList< T >* h, BiList< T >* e)
 }
 
 template< class T >
-BiList< T > popBack(BiList< T >* h);
+BiList< T >* cutTail(BiList< T >* h)
+{
+  BiList< T >* node = h->prev;
+  h->prev->prev->next = h;
+  h->prev = h->prev->prev;
+  delete node;
+  return h;
+}
 
 template< class T >
-BiList< T > popFront(BiList< T >* h);
+BiList< T >* cutHead(BiList< T >* h)
+{
+  BiList< T >* newHead = h->next;
+  h->prev->next = newHead;
+  newHead->prev = h->prev;
+  delete h;
+  return newHead;
+}
 
 template< class T, class R >
 R traverse(R r, BiList< T >* h, BiList< T >* e);
