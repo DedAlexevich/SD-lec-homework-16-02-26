@@ -40,9 +40,9 @@ BiList< T >* insert(BiList< T >* h ,size_t pos, T val)
 {
   BiList< T >* curr = h;
   for (size_t p = 0; p < pos; ++p) {
-    curr->next;
+    curr = curr->next;
   }
-  pushBack(curr, val);
+  return pushBack(curr, val);
 }
 
 template< class T >
@@ -62,7 +62,7 @@ template< class T >
 void clear(BiList< T >* h)
 {
   BiList< T >* e = h->prev;
-  BiList< T >* n;
+  BiList< T >* n = nullptr;
   while (h != e) {
     n = h->next;
     delete h;
@@ -87,7 +87,13 @@ template< class T, class R >
 R rtraverse(R r, BiList< T >* h, BiList< T >* e);
 
 template< class T >
-T& at(BiList< T >* h, size_t pos);
+T& at(BiList< T >* h, size_t pos)
+{
+  for (size_t i = 0; i < pos; ++i) {
+    h = h->next;
+  }
+  return h->val;
+}
 
 int main()
 {
@@ -97,6 +103,10 @@ int main()
 
   insert(bilist->prev, 1, 3);
   std::cout << size(bilist) << '\n';
+  std::cout << at(bilist, 0) << '\n';
+  std::cout << at(bilist, 1) << '\n';
+  std::cout << at(bilist, 2) << '\n';
+  std::cout << at(bilist, 3) << '\n';
   clear(bilist);
 }
 
