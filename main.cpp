@@ -72,7 +72,18 @@ void clear(BiList< T >* h)
 }
 
 template< class T >
-BiList< T > remove(BiList< T >* h, BiList< T >* e);
+BiList< T >* remove(BiList< T >* h, BiList< T >* e)
+{
+  BiList< T >* n = h;
+  while (h != e) {
+    h->prev->next = h->next;
+    h->next->prev = h->prev;
+    n = h->next;
+    delete h;
+    h = n;
+  }
+  return n->prev;
+}
 
 template< class T >
 BiList< T > popBack(BiList< T >* h);
@@ -103,10 +114,18 @@ int main()
 
   insert(bilist->prev, 1, 3);
   std::cout << size(bilist) << '\n';
+  std::cout << at(bilist, 0) << '\n';  //1
+  std::cout << at(bilist, 1) << '\n';  //3
+  std::cout << at(bilist, 2) << '\n';  //2
+  std::cout << at(bilist, 3) << "\n\n";//0
+
+  remove(bilist->next, bilist->next->next);
+  std::cout << size(bilist) << '\n';
   std::cout << at(bilist, 0) << '\n';
   std::cout << at(bilist, 1) << '\n';
   std::cout << at(bilist, 2) << '\n';
   std::cout << at(bilist, 3) << '\n';
+
   clear(bilist);
 }
 
