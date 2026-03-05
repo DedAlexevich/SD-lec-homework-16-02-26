@@ -10,7 +10,7 @@ struct BiList {
 template< class T >
 BiList< T >* makeBiList(T& val)
 {
-  BiList< T >* list = new BiList<T>{val, nullptr, nullptr};  //конструктор копирования для T
+  BiList< T >* list = new BiList<T>{val, nullptr, nullptr};
   list->next = list;
   list->prev = list;
   return list;
@@ -19,7 +19,7 @@ BiList< T >* makeBiList(T& val)
 template< class T >
 BiList< T >* add(BiList< T >* h, T& val)
 {
-  BiList< T >* node = new BiList< T > {val, h, h->prev}; //конструктор копирования для T
+  BiList< T >* node = new BiList< T > {val, h, h->prev};
   h->prev->next = node;
   h->prev = node;
   return node;
@@ -28,7 +28,7 @@ BiList< T >* add(BiList< T >* h, T& val)
 template< class T >
 BiList< T >* insert(BiList< T >* h, T& val)
 {
-  BiList< T >* node = new BiList< T > {val, h->next, h}; //конструктор копирования для T
+  BiList< T >* node = new BiList< T > {val, h->next, h};
   h->next->prev = node;
   h->next = node;
   return h;
@@ -67,7 +67,7 @@ void clear(BiList< T >* h) noexcept
   BiList< T >* n = nullptr;
   while (h != e) {
     n = h->next;
-    delete h; // T должен иметь деструктор
+    delete h;
     h = n;
   }
   delete e;
@@ -96,7 +96,7 @@ BiList< T >* erase(BiList< T >* h) noexcept
   BiList< T >* rm = h->next;
   h->next = rm->next;
   rm->next->prev = h;
-  delete rm; // T нужен деструктор
+  delete rm;
   return h;
 }
 
